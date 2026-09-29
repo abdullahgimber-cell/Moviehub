@@ -21,7 +21,7 @@ async function searchMovies(){let qv=q.value.trim();if(!qv)return;homeSection(fa
 function homeSection(v){home.classList.toggle("hidden",!v);results.classList.toggle("hidden",v);freeMovies.classList.add("hidden")}
 function home(){homeSection(true)}
 function free(){home.classList.add("hidden");results.classList.add("hidden");freeMovies.classList.remove("hidden");freeGrid.innerHTML=freeList.map((m,i)=>`<article><img class="poster" src="${m.poster}" alt=""><div class="title">${esc(m.title)}</div><div class="meta">${m.year} • Legal/free source</div><button class="watch" onclick="play(${i})">▶ Watch</button></article>`).join("")}
-function play(i){video.src=freeList[i].video;playing.textContent="Now playing: "+freeList[i].title;player.style.display="block";video.play().catch(()=>{});scrollTo(0,0)}
+function play(i){const m=freeList[i];video.pause();video.src=m.video;video.load();playing.textContent="Now playing: "+m.title;player.style.display="block";player.scrollIntoView({behavior:"smooth",block:"start"});}
 function closePlayer(){video.pause();video.removeAttribute("src");video.load();player.style.display="none"}
 q.addEventListener("keydown",e=>{if(e.key==="Enter")searchMovies()});load();
 </script></body></html>
