@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<title>MovieHub — Discover Movies</title>
+<style>
+:root{--bg:#080a0f;--panel:#11151d;--panel2:#171c25;--text:#f5f7fb;--muted:#9da6b5;--accent:#e8b84b;--border:#252c38}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:50;background:rgba(8,10,15,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{max-width:1200px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:14px}.brand{font-size:23px;font-weight:900;white-space:nowrap}.brand span{color:var(--accent)}
+nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}nav button,.smallbtn{background:transparent;color:var(--muted);border:1px solid transparent;border-radius:10px;padding:9px 11px}nav button:hover,.smallbtn:hover{color:var(--text);background:var(--panel2)}
+.hero{max-width:1200px;margin:0 auto;padding:34px 18px 18px}.hero h1{font-size:clamp(30px,6vw,58px);margin:0 0 8px;line-height:1.02}.hero p{color:var(--muted);margin:0 0 20px}
+.search{display:flex;gap:9px;max-width:760px}.search input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:13px 15px;outline:none}.search input:focus{border-color:var(--accent)}.primary{background:var(--accent);color:#111;border:0;border-radius:12px;padding:12px 16px;font-weight:800}
+main{max-width:1200px;margin:auto;padding:0 18px 60px}.section{margin-top:30px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.section h2{margin:0;font-size:22px}.sectionhead span{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;min-width:0;transition:transform .15s,border-color .15s}.card:hover{transform:translateY(-3px);border-color:#394353}.poster{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;background:#151922}.cardbody{padding:10px}.title{font-weight:750;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{color:var(--muted);font-size:12px;margin-top:5px}.actions{display:flex;gap:6px;margin-top:9px}.actions button{flex:1;border-radius:9px;padding:8px 5px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:12px}.actions .gold{background:var(--accent);color:#111;border-color:var(--accent);font-weight:800}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:5px}.chip{white-space:nowrap;background:var(--panel);border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:8px 12px}.chip.active{background:var(--accent);border-color:var(--accent);color:#111;font-weight:800}
+.notice{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:14px;color:var(--muted);line-height:1.5}.notice strong{color:var(--text)}
+.hidden{display:none!important}.empty{padding:24px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--border);border-radius:13px}.error{color:#ffb4b4}
+footer{border-top:1px solid var(--border);padding:28px 18px;text-align:center;color:var(--muted);font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;display:flex;align-items:flex-end;justify-content:center;padding:0}.modalbox{width:min(900px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px}.close{float:right;background:var(--panel2);border:0;color:var(--text);border-radius:10px;padding:8px 11px}.detail{display:grid;grid-template-columns:220px 1fr;gap:20px;margin-top:10px}.detail img{width:100%;border-radius:12px}.detail h2{margin:0 0 8px}.detail p{color:var(--muted);line-height:1.6}.pill{display:inline-block;background:var(--panel2);border:1px solid var(--border);padding:5px 8px;border-radius:999px;font-size:12px;margin:3px 4px 3px 0}.linkrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.linkbtn{display:inline-block;text-decoration:none;background:var(--accent);color:#111;font-weight:800;border-radius:10px;padding:10px 13px}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin-top:15px}.video iframe{width:100%;height:100%;border:0}
+.form{display:grid;gap:10px;max-width:700px}.form input,.form textarea{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:11px}.form textarea{min-height:120px;resize:vertical}
+@media(max-width:950px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:650px){.nav{align-items:flex-start;flex-wrap:wrap}.brand{width:100%}nav{width:100%;margin:0;overflow:auto;flex-wrap:nowrap}nav button{white-space:nowrap}.hero{padding-top:25px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.detail{grid-template-columns:120px 1fr;gap:13px}.detail h2{font-size:20px}.search{flex-direction:column}.search .primary{width:100%}}
+@media(min-width:651px) and (max-width:1100px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="brand">Movie<span>Hub</span></div>
+    <nav>
+      <button onclick="goHome()">Home</button>
+      <button onclick="showSection('discover')">Discover</button>
+      <button onclick="showSection('favorites')">⭐ Favorites</button>
+      <button onclick="showSection('about')">About</button>
+      <button onclick="showSection('care')">Customer Care</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Find your next movie.</h1>
+  <p>Discover modern movies, watch official trailers, and find legal places to stream them.</p>
+  <div class="search">
+    <input id="searchBox" placeholder="Search movies, e.g. Avatar, Black Panther..." autocomplete="off">
+    <button class="primary" onclick="searchMovies()">Search</button>
+  </div>
+</section>
+
+<main>
+  <section id="homeSection">
+    <div id="apiNotice" class="notice hidden"></div>
+
+    <section class="section">
+      <div class="sectionhead"><h2>🔥 Trending this week</h2><span>Updated from TMDB</span></div>
+      <div id="trending" class="grid"></div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead"><h2>🎬 Modern movies</h2><span>2015–2026</span></div>
+      <div id="modern" class="grid"></div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead"><h2>⭐ Popular</h2><span>Popular with movie fans</span></div>
+      <div id="popular" class="grid"></div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead"><h2>🎭 Browse by genre</h2></div>
+      <div id="genres" class="chips"></div>
+    </section>
+
+    <section class="section">
+      <div class="notice">
+        <strong>How MovieHub works</strong><br>
+        MovieHub provides movie information, posters and official trailers. When you choose <b>Where to Watch</b>, MovieHub sends you to a legal streaming provider when TMDB has provider information for your region. MovieHub does not host unauthorized movie files.
+      </div>
+    </section>
+  </section>
+
+  <section id="resultsSection" class="section hidden">
+    <div class="sectionhead"><h2 id="resultsTitle">Search results</h2></div>
+    <div id="results" class="grid"></div>
+  </section>
+
+  <section id="genreSection" class="section hidden">
+    <div class="sectionhead"><h2 id="genreTitle">Genre</h2><button class="smallbtn" onclick="goHome()">← Back</button></div>
+    <div id="genreResults" class="grid"></div>
+  </section>
+
+  <section id="favoritesSection" class="section hidden">
+    <div class="sectionhead"><h2>⭐ My Favorites</h2><button class="smallbtn" onclick="goHome()">← Back</button></div>
+    <div id="favorites" class="grid"></div>
+  </section>
+
+  <section id="aboutSection" class="section hidden">
+    <div class="notice">
+      <h2>About MovieHub</h2>
+      <p><strong>Abdullahi HUSSAINI Gimba</strong>, 17, from Yobe State, Nigeria, created MovieHub as a movie-discovery project for fellow movie lovers.</p>
+      <p>MovieHub is designed to make finding movies, trailers and legal streaming options simple, clean and enjoyable.</p>
+      <p><strong>“Aysh Bella, I will be rich you don’t play with me.”</strong></p>
+      <p>Interests: football, video games and reading articles.</p>
+    </div>
+  </section>
+
+  <section id="careSection" class="section hidden">
+    <div class="notice">
+      <h2>Customer Care</h2>
+      <p>Found a broken trailer, incorrect movie information, or a problem with a streaming link? Contact MovieHub.</p>
+      <form class="form" onsubmit="sendCare(event)">
+        <input id="careName" required placeholder="Your name">
+        <input id="careEmail" required type="email" placeholder="Your email">
+        <textarea id="careMessage" required placeholder="Tell us what happened..."></textarea>
+        <button class="primary" type="submit">Send message</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<footer>© 2026 MovieHub • Built by Abdullahi HUSSAINI Gimba • Movie data by TMDB</footer>
+
+<script>
+const TMDB_API_KEY="780071a02b653837b3b76b1e0b4e1fb9";
+const API="https://api.themoviedb.org/3";
+const IMG="https://image.tmdb.org/t/p/w500";
+const BACKDROP="https://image.tmdb.org/t/p/w780";
+const REGION="NG";
+const MIN_YEAR=2015, MAX_YEAR=2026;
+let currentMovies=[];
+let favorites=JSON.parse(localStorage.getItem("moviehub_favorites")||"[]");
+
+const genreMap={28:"Action",12:"Adventure",16:"Animation",35:"Comedy",80:"Crime",99:"Documentary",18:"Drama",10751:"Family",14:"Fantasy",36:"History",27:"Horror",10402:"Music",9648:"Mystery",10749:"Romance",878:"Science Fiction",53:"Thriller",10752:"War",37:"Western"};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const year=m=>(m.release_date||"").slice(0,4)||"—";
+
+function api(path,params={}){
+  const u=new URL(API+path);
+  u.searchParams.set("api_key",TMDB_API_KEY);
+  u.searchParams.set("language","en-US");
+  Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+  return fetch(u).then(async r=>{if(!r.ok)throw new Error("TMDB HTTP "+r.status);return r.json()});
+}
+function validKey(){return TMDB_API_KEY && !TMDB_API_KEY.includes("PASTE_")}
+
+function card(m){
+  const poster=m.poster_path?IMG+m.poster_path:"https://via.placeholder.com/500x750?text=No+Poster";
+  const fav=favorites.includes(m.id);
+  return `<article class="card">
+    <img class="poster" loading="lazy" src="${poster}" alt="${esc(m.title||"Movie")}">
+    <div class="cardbody">
+      <div class="title" title="${esc(m.title||"")}">${esc(m.title||"Untitled")}</div>
+      <div class="meta">${year(m)} • ⭐ ${(m.vote_average||0).toFixed(1)}</div>
+      <div class="actions">
+        <button class="gold" onclick="details(${m.id})">Details</button>
+        <button onclick="toggleFavorite(${m.id})">${fav?"★ Saved":"☆ Save"}</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function render(id,list){
+  $(id).innerHTML=list.length?list.map(card).join(""):`<div class="empty" style="grid-column:1/-1">No movies found.</div>`;
+}
+
+async function loadHome(){
+  if(!validKey()){
+    $("apiNotice").classList.remove("hidden");
+    $("apiNotice").innerHTML='<strong>TMDB API key needed.</strong><br>Open this file in Kodex and replace <code>PASTE_YOUR_TMDB_API_KEY_HERE</code> with your own TMDB API key. Keep the key private.';
+    ["trending","modern","popular"].forEach(id=>$(id).innerHTML='<div class="empty" style="grid-column:1/-1">Waiting for your TMDB API key.</div>');
+    return;
+  }
+  try{
+    const [trend,modern,pop]=await Promise.all([
+      api("/trending/movie/week"),
+      api("/discover/movie",{primary_release_date_gte:`${MIN_YEAR}-01-01`,primary_release_date_lte:`${MAX_YEAR}-12-31`,sort_by:"popularity.desc","vote_count.gte":"20","page":"1"}),
+      api("/movie/popular",{page:"1"})
+    ]);
+    currentMovies=[...(trend.results||[]),...(modern.results||[]),...(pop.results||[])];
+    render("trending",(trend.results||[]).filter(m=>year(m)>=String(MIN_YEAR)).slice(0,12));
+    render("modern",(modern.results||[]).slice(0,18));
+    render("popular",(pop.results||[]).filter(m=>year(m)>=String(MIN_YEAR)).slice(0,12));
+    loadGenres();
+  }catch(e){
+    $("apiNotice").classList.remove("hidden");
+    $("apiNotice").innerHTML='<strong class="error">TMDB could not load.</strong><br>Check that your API key is correct and that you are connected to the internet. Then refresh MovieHub.';
+    ["trending","modern","popular"].forEach(id=>$(id).innerHTML='<div class="empty error" style="grid-column:1/-1">Could not load movies. Check your TMDB API key.</div>');
+  }
+}
+
+async function loadGenres(){
+  try{
+    const data=await api("/genre/movie/list");
+    $("genres").innerHTML=(data.genres||[]).map(g=>`<button class="chip" onclick="genre(${g.id},'${esc(g.name)}')">${esc(g.name)}</button>`).join("");
+  }catch(e){}
+}
+
+async function genre(id,name){
+  hideSections();
+  $("genreSection").classList.remove("hidden");
+  $("genreTitle").textContent=name+" Movies";
+  $("genreResults").innerHTML='<div class="empty" style="grid-column:1/-1">Loading...</div>';
+  try{
+    const d=await api("/discover/movie",{with_genres:id,primary_release_date_gte:`${MIN_YEAR}-01-01`,primary_release_date_lte:`${MAX_YEAR}-12-31`,sort_by:"popularity.desc","vote_count.gte":"10"});
+    render("genreResults",(d.results||[]).slice(0,30));
+  }catch(e){$("genreResults").innerHTML='<div class="empty error" style="grid-column:1/-1">Could not load this genre.</div>'}
+}
+
+async function searchMovies(){
+  const q=$("searchBox").value.trim();
+  if(!q)return;
+  hideSections();$("resultsSection").classList.remove("hidden");$("resultsTitle").textContent=`Results for “${q}”`;
+  $("results").innerHTML='<div class="empty" style="grid-column:1/-1">Searching...</div>';
+  try{
+    const d=await api("/search/movie",{query:q,include_adult:"false","page":"1"});
+    const list=(d.results||[]).filter(m=>year(m)==="—"||year(m)>=String(MIN_YEAR));
+    render("results",list.slice(0,30));
+  }catch(e){$("results").innerHTML='<div class="empty error" style="grid-column:1/-1">Search failed. Check your connection and API key.</div>'}
+}
+$("searchBox").addEventListener("keydown",e=>{if(e.key==="Enter")searchMovies()});
+
+async function details(id){
+  $("modal").classList.remove("hidden");
+  $("modalContent").innerHTML='<div class="empty">Loading movie details...</div>';
+  try{
+    const [m,credits,videos,providers]=await Promise.all([
+      api("/movie/"+id),
+      api("/movie/"+id+"/credits"),
+      api("/movie/"+id+"/videos"),
+      api("/movie/"+id+"/watch/providers")
+    ]);
+    const trailer=(videos.results||[]).find(v=>v.site==="YouTube" && /Trailer/i.test(v.type)) || (videos.results||[]).find(v=>v.site==="YouTube");
+    const directors=(credits.crew||[]).filter(x=>x.job==="Director").slice(0,3).map(x=>esc(x.name)).join(", ");
+    const cast=(credits.cast||[]).slice(0,5).map(x=>esc(x.name)).join(", ");
+    const region=providers.results?.[REGION]||providers.results?.US||null;
+    const watchLink=region?.link;
+    const providerNames=[...(region?.flatrate||[]),...(region?.free||[]),...(region?.ads||[]),...(region?.rent||[]),...(region?.buy||[])].slice(0,8).map(p=>`<span class="pill">${esc(p.provider_name)}</span>`).join("");
+    const trailerHTML=trailer?`<div class="video"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(trailer.key)}?rel=0" title="Official trailer" allowfullscreen></iframe></div>`:`<div class="notice">No YouTube trailer was listed by TMDB for this movie.</div>`;
+    $("modalContent").innerHTML=`
+      <div class="detail">
+        <img src="${m.poster_path?IMG+m.poster_path:"https://via.placeholder.com/500x750?text=No+Poster"}" alt="${esc(m.title)}">
+        <div>
+          <h2>${esc(m.title)}</h2>
+          <div class="meta">${year(m)} • ⭐ ${(m.vote_average||0).toFixed(1)} • ${m.runtime?m.runtime+" min":"Runtime unavailable"}</div>
+          <p>${esc(m.overview||"No synopsis available.")}</p>
+          <div>${(m.genres||[]).map(g=>`<span class="pill">${esc(g.name)}</span>`).join("")}</div>
+          ${directors?`<p><strong>Director:</strong> ${directors}</p>`:""}
+          ${cast?`<p><strong>Cast:</strong> ${cast}</p>`:""}
+          <div class="linkrow">
+            ${watchLink?`<a class="linkbtn" href="${watchLink}" target="_blank" rel="noopener">▶ Where to Watch</a>`:""}
+            ${m.homepage?`<a class="linkbtn secondary" href="${m.homepage}" target="_blank" rel="noopener">Official Site</a>`:""}
+            <button class="linkbtn secondary" onclick="toggleFavorite(${m.id});details(${m.id})">${favorites.includes(m.id)?"★ Saved":"☆ Add Favorite"}</button>
+          </div>
+          <p><strong>Legal providers found for ${REGION}:</strong><br>${providerNames||"TMDB has no provider listing for this title in Nigeria. Check the movie's official distributor or search a legal streaming service."}</p>
+        </div>
+      </div>
+      <h3>Official trailer</h3>${trailerHTML}`;
+  }catch(e){$("modalContent").innerHTML='<div class="empty error">Could not load movie details. Please try again.</div>'}
+}
+function closeModal(){$("modal").classList.add("hidden");$("modalContent").innerHTML=""}
+
+function toggleFavorite(id){
+  favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
+  localStorage.setItem("moviehub_favorites",JSON.stringify(favorites));
+  if(!$("favoritesSection").classList.contains("hidden"))loadFavorites();
+  loadHome();
+}
+
+async function loadFavorites(){
+  $("favorites").innerHTML='<div class="empty" style="grid-column:1/-1">Loading favorites...</div>';
+  if(!favorites.length){$("favorites").innerHTML='<div class="empty" style="grid-column:1/-1">You have not saved any movies yet.</div>';return}
+  try{
+    const arr=await Promise.all(favorites.map(id=>api("/movie/"+id).catch(()=>null)));
+    render("favorites",arr.filter(Boolean));
+  }catch(e){$("favorites").innerHTML='<div class="empty error" style="grid-column:1/-1">Could not load favorites.</div>'}
+}
+
+function hideSections(){
+  ["homeSection","resultsSection","genreSection","favoritesSection","aboutSection","careSection"].forEach(id=>$(id).classList.add("hidden"));
+}
+function goHome(){hideSections();$("homeSection").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"})}
+function showSection(name){
+  hideSections();
+  if(name==="discover")$("homeSection").classList.remove("hidden");
+  if(name==="favorites"){ $("favoritesSection").classList.remove("hidden");loadFavorites(); }
+  if(name==="about")$("aboutSection").classList.remove("hidden");
+  if(name==="care")$("careSection").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function sendCare(e){
+  e.preventDefault();
+  const subject=encodeURIComponent("MovieHub Customer Care");
+  const body=encodeURIComponent(`Name: ${$("careName").value}\nEmail: ${$("careEmail").value}\n\n${$("careMessage").value}`);
+  location.href=`mailto:YOUR_MOVIEHUB_EMAIL@example.com?subject=${subject}&body=${body}`;
+}
+loadHome();
+</script>
+</body>
+</html>
